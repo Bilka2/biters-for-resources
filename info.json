@@ -4,7 +4,8 @@
   "factorio_version" : "1.1",
   "title": "Biters for resources",
   "author": "Bilka",
-  "description": "All resources are replaced by biter nests that drop those resources when killed.",
+  "description": "All resources are replaced by enemy nests that drop those resources when killed.",
+  "dependencies": ["base"],
   "package":
   { 
     "scripts":
