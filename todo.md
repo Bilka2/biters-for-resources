@@ -5,7 +5,7 @@
 * [x] add drops
 * [ ] add drop compression
 * [ ] add different drop ratios
-* [ ] add locale
-* [ ] better graphics
+* [x] add locale
+* [x] better graphics
 * [ ] decide how to handle uranium and oil
 * [ ] balancing
