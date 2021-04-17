@@ -39,7 +39,7 @@ local function make_worm_copy(resource, item_name, size)
   worm.enemy_map_color = resource.map_color
   worm.loot =  {{item = item_name, count_min = 25, count_max = 75}} -- TODO Bilka: this correct? vary by size?
 
-  -- data\base\prototypes\entity\enemy-autoplace-utils.lua Line 146
+  -- data\base\prototypes\entity\enemy-autoplace-utils.lua Line 148
   local distance_height_multiplier = worm.autoplace.probability_expression.arguments.source.arguments[1].arguments[2]
   -- data\base\prototypes\entity\enemy-autoplace-utils.lua Line 151 (0.25 + distance_factor * 0.05)
   local distance_limiter = worm.autoplace.probability_expression.arguments.source.arguments[3]
