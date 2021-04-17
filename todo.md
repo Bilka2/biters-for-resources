@@ -7,7 +7,7 @@
 * [x] add locale
 * [x] better graphics
 * [x] decide how to handle oil
-* [ ] drop oil barrels that do not result in barrels when emptied
+* [x] drop oil barrels that do not result in barrels when emptied
 * [x] decide how to handle uranium
 * [x] just ignore the acid requirement for uranium 
 * [ ] balancing

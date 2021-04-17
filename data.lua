@@ -8,15 +8,14 @@ end
 
 local function make_unit_copy(map_color, item_name, size, type)
   local enemy = util.copy(data.raw.unit[size .. "-" .. type])
-  enemy.localised_name = {"", {"entity-name." .. item_name}, " ", {"entity-name." .. enemy.name}}
+  enemy.localised_name = {"entity-name.biter-for-resources", {"entity-name." .. enemy.name}, {"entity-name." .. item_name}}
   enemy.name = enemy.name .. ":" .. item_name
   enemy.enemy_map_color = map_color
   enemy.loot = make_loot(item_name)
   data:extend{enemy}
 end
 
-local function make_resource_units(resource, item_name, enemy_type)
-  local map_color = resource.map_color
+local function make_resource_units(map_color, item_name, enemy_type)
   make_unit_copy(map_color, item_name, "small", enemy_type)
   make_unit_copy(map_color, item_name, "medium", enemy_type)
   make_unit_copy(map_color, item_name, "big", enemy_type)
@@ -34,7 +33,7 @@ end
 
 local function make_worm_copy(resource, item_name, size)
   local worm = util.copy(data.raw.turret[size .. "-worm-turret"])
-  worm.localised_name = {"", {"entity-name." .. item_name}, " ", {"entity-name." .. worm.name}}
+  worm.localised_name = {"entity-name.biter-for-resources", {"entity-name." .. worm.name}, {"entity-name." .. item_name}}
   worm.name = worm.name .. ":" .. item_name
   worm.enemy_map_color = resource.map_color
   worm.loot =  {{item = item_name, count_min = 25, count_max = 75}} -- TODO Bilka: this correct? vary by size?
@@ -47,6 +46,9 @@ local function make_worm_copy(resource, item_name, size)
   worm.autoplace = util.copy(resource.autoplace)
   worm.autoplace.force = "enemy"
   worm.autoplace.order = "z" .. worm.autoplace.order
+  if item_name == "variant-crude-oil-barrel" then
+    worm.autoplace.probability_expression = worm.autoplace.probability_expression.arguments[1]
+  end
   worm.autoplace.probability_expression = noise.min(worm.autoplace.probability_expression * distance_height_multiplier, distance_limiter)
   worm.autoplace.probability_expression = random_penalty(worm.autoplace.probability_expression)
 
@@ -59,7 +61,7 @@ end
 
 local function make_spawner_copy(resource, item_name, enemy_type)
   local spawner = util.copy(data.raw["unit-spawner"][enemy_type .. "-spawner"])
-  spawner.localised_name = {"", {"entity-name." .. item_name}, " ", {"entity-name." .. spawner.name}}
+  spawner.localised_name = {"entity-name.biter-for-resources", {"entity-name." .. spawner.name}, {"entity-name." .. item_name}}
   spawner.name = spawner.name .. ":" .. item_name
   spawner.enemy_map_color = resource.map_color
   spawner.loot = {{item = item_name, count_min = 50, count_max = 150}}
@@ -69,6 +71,9 @@ local function make_spawner_copy(resource, item_name, enemy_type)
 
   spawner.autoplace = util.copy(resource.autoplace)
   spawner.autoplace.force = "enemy"
+  if item_name == "variant-crude-oil-barrel" then
+    spawner.autoplace.probability_expression = spawner.autoplace.probability_expression.arguments[1]
+  end
   spawner.autoplace.probability_expression = noise.min(spawner.autoplace.probability_expression, 0.25)
   spawner.autoplace.probability_expression = random_penalty(spawner.autoplace.probability_expression)
 
@@ -92,9 +97,9 @@ local function enemies_for_resource(resource_name)
   make_worm_copy(resource, item_name, "big")
   make_worm_copy(resource, item_name, "behemoth")
 
-  make_resource_units(resource, item_name, "biter")
+  make_resource_units(resource.map_color, item_name, "biter")
   make_spawner_copy(resource, item_name, "biter")
-  make_resource_units(resource, item_name, "spitter")
+  make_resource_units(resource.map_color, item_name, "spitter")
   make_spawner_copy(resource, item_name, "spitter")
 
   data.raw.resource[resource_name].autoplace = nil
@@ -105,3 +110,22 @@ enemies_for_resource("copper-ore")
 enemies_for_resource("stone")
 enemies_for_resource("coal")
 enemies_for_resource("uranium-ore")
+
+-- oil is special
+do
+  local resource = util.copy(data.raw.resource["crude-oil"])
+  local item_name = "variant-crude-oil-barrel"
+
+  graphics.enemy_decals(resource.map_color, item_name)
+  make_worm_copy(resource, item_name, "small")
+  make_worm_copy(resource, item_name, "medium")
+  make_worm_copy(resource, item_name, "big")
+  make_worm_copy(resource, item_name, "behemoth")
+
+  make_resource_units(resource.map_color, item_name, "biter")
+  make_spawner_copy(resource, item_name, "biter")
+  make_resource_units(resource.map_color, item_name, "spitter")
+  make_spawner_copy(resource, item_name, "spitter")
+
+  data.raw.resource["crude-oil"].autoplace = nil
+end
