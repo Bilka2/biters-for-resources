@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.0.2
+Version: 1.0.0
 Date: ????
   Changes:
+    - The mod is now considered finished.
     - Disabled the base game biters.
     - This also disables enemy expansion.
 ---------------------------------------------------------------------------------------------------
