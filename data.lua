@@ -3,9 +3,18 @@ local noise = require("noise")
 local graphics = require("graphics")
 
 local biter_sizes = {"small", "medium", "big", "behemoth"}
+local loot_scaling =
+{
+  small = 1,
+  medium = 1,
+  big = 1,
+  behemoth = 1
+}
 
-local function make_loot(item_name)
-  return {{item = item_name, count_min = 1, count_max = 3}} -- TODO Bilka: vary by size?
+local function make_loot(item_name, size, multiplier)
+  local count_min = 1 * loot_scaling[size] * multiplier
+  local count_max = 3 * loot_scaling[size] * multiplier
+  return {{item = item_name, count_min = count_min, count_max = count_max}}
 end
 
 local function make_unit_copy(map_color, item_name, size, type)
@@ -13,7 +22,7 @@ local function make_unit_copy(map_color, item_name, size, type)
   enemy.localised_name = {"entity-name.biter-for-resources", {"entity-name." .. enemy.name}, {"entity-name." .. item_name}}
   enemy.name = enemy.name .. ":" .. item_name
   enemy.enemy_map_color = map_color
-  enemy.loot = make_loot(item_name)
+  enemy.loot = make_loot(item_name, size, 1)
   data:extend{enemy}
 end
 
@@ -37,7 +46,7 @@ local function make_worm_copy(resource, item_name, size)
   worm.localised_name = {"entity-name.biter-for-resources", {"entity-name." .. worm.name}, {"entity-name." .. item_name}}
   worm.name = worm.name .. ":" .. item_name
   worm.enemy_map_color = resource.map_color
-  worm.loot =  {{item = item_name, count_min = 25, count_max = 75}} -- TODO Bilka: this correct? vary by size?
+  worm.loot =  make_loot(item_name, size, 15)
 
   -- data\base\prototypes\entity\enemy-autoplace-utils.lua Line 148
   local distance_height_multiplier = worm.autoplace.probability_expression.arguments.source.arguments[1].arguments[2]
