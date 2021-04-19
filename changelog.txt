@@ -2,6 +2,8 @@
 Version: 0.0.2
 Date: ????
   Changes:
+    - Disabled the base game biters.
+    - This also disables enemy expansion.
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.1
 Date: 2021-04-17

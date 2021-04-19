@@ -2,6 +2,8 @@ local util = require("util")
 local noise = require("noise")
 local graphics = require("graphics")
 
+local biter_sizes = {"small", "medium", "big", "behemoth"}
+
 local function make_loot(item_name)
   return {{item = item_name, count_min = 1, count_max = 3}} -- TODO Bilka: vary by size?
 end
@@ -16,10 +18,9 @@ local function make_unit_copy(map_color, item_name, size, type)
 end
 
 local function make_resource_units(map_color, item_name, enemy_type)
-  make_unit_copy(map_color, item_name, "small", enemy_type)
-  make_unit_copy(map_color, item_name, "medium", enemy_type)
-  make_unit_copy(map_color, item_name, "big", enemy_type)
-  make_unit_copy(map_color, item_name, "behemoth", enemy_type)
+  for _, size in pairs(biter_sizes) do
+    make_unit_copy(map_color, item_name, size, enemy_type)
+  end
 end
 
 -- See data\base\prototypes\entity\enemy-autoplace-utils.lua Line 130 and Line 154
@@ -92,10 +93,9 @@ local function enemies_for_resource(resource_name)
   local item_name = resource.minable.result
 
   graphics.enemy_decals(resource.map_color, item_name)
-  make_worm_copy(resource, item_name, "small")
-  make_worm_copy(resource, item_name, "medium")
-  make_worm_copy(resource, item_name, "big")
-  make_worm_copy(resource, item_name, "behemoth")
+  for _, size in pairs(biter_sizes) do
+    make_worm_copy(resource, item_name, size)
+  end
 
   make_resource_units(resource.map_color, item_name, "biter")
   make_spawner_copy(resource, item_name, "biter")
@@ -113,19 +113,38 @@ enemies_for_resource("uranium-ore")
 
 -- oil is special
 do
-  local resource = util.copy(data.raw.resource["crude-oil"])
+  local resource_name = "crude-oil"
   local item_name = "variant-crude-oil-barrel"
+  local resource = util.copy(data.raw.resource[resource_name])
 
   graphics.enemy_decals(resource.map_color, item_name)
-  make_worm_copy(resource, item_name, "small")
-  make_worm_copy(resource, item_name, "medium")
-  make_worm_copy(resource, item_name, "big")
-  make_worm_copy(resource, item_name, "behemoth")
+  for _, size in pairs(biter_sizes) do
+    make_worm_copy(resource, item_name, size)
+  end
 
   make_resource_units(resource.map_color, item_name, "biter")
   make_spawner_copy(resource, item_name, "biter")
   make_resource_units(resource.map_color, item_name, "spitter")
   make_spawner_copy(resource, item_name, "spitter")
 
-  data.raw.resource["crude-oil"].autoplace = nil
+  data.raw.resource[resource_name].autoplace = nil
 end
+
+-- no vanilla biters
+for _, size in pairs(biter_sizes) do
+  data.raw.unit[size .. "-spitter"].autoplace = nil
+  data.raw.unit[size .. "-biter"].autoplace = nil
+  data.raw.turret[size .. "-worm-turret"].autoplace = nil
+end
+data.raw["unit-spawner"]["spitter-spawner"].autoplace = nil
+data.raw["unit-spawner"]["biter-spawner"].autoplace = nil
+
+--[[ This disables the entire enemy tab in the map gen screen, so evolution cannot be modified. So the autoplace control is kept, but it doesn't do anything.
+  data.raw["autoplace-control"]["enemy-base"] = nil
+
+for _, preset in pairs(data.raw["map-gen-presets"].default) do
+  if preset.basic_settings and preset.basic_settings.autoplace_controls then
+    preset.basic_settings.autoplace_controls["enemy-base"] = nil
+  end
+end
+--]]
