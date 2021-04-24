@@ -17,12 +17,27 @@ local function make_loot(item_name, size, multiplier)
   return {{item = item_name, count_min = count_min, count_max = count_max}}
 end
 
+local function make_resource_icon(orignal, item_name)
+  local filename = "__base__/graphics/icons/" .. item_name .. ".png"
+
+  -- Really this should be using the barrel icon but that would mean doing all the scaling on all the layers.
+  -- Furthermore, it would have to be in data-updates which sounds annoying.
+  -- So this uses the fluid icon instead :)
+  if item_name == "variant-crude-oil-barrel" then
+    filename = "__base__/graphics/icons/fluid/crude-oil.png"
+  end
+
+  return  {{icon = orignal}, {icon = filename, scale = 0.25, shift = {-8, 8}, icon_size = 64, icon_mipmaps = 4}}
+end
+
 local function make_unit_copy(map_color, item_name, size, type)
   local enemy = util.copy(data.raw.unit[size .. "-" .. type])
   enemy.localised_name = {"entity-name.biter-for-resources", {"entity-name." .. enemy.name}, {"entity-name." .. item_name}}
   enemy.name = enemy.name .. ":" .. item_name
   enemy.enemy_map_color = map_color
   enemy.loot = make_loot(item_name, size, 1)
+  enemy.icons = make_resource_icon(enemy.icon, item_name)
+  enemy.icon = nil
   data:extend{enemy}
 end
 
@@ -47,6 +62,8 @@ local function make_worm_copy(resource, item_name, size)
   worm.name = worm.name .. ":" .. item_name
   worm.enemy_map_color = resource.map_color
   worm.loot =  make_loot(item_name, size, 15)
+  worm.icons = make_resource_icon(worm.icon, item_name)
+  worm.icon = nil
 
   -- data\base\prototypes\entity\enemy-autoplace-utils.lua Line 148
   local distance_height_multiplier = worm.autoplace.probability_expression.arguments.source.arguments[1].arguments[2]
@@ -56,6 +73,7 @@ local function make_worm_copy(resource, item_name, size)
   worm.autoplace = util.copy(resource.autoplace)
   worm.autoplace.force = "enemy"
   worm.autoplace.order = "z" .. worm.autoplace.order
+  -- data\core\lualib\resource-autoplace.lua Line 375 (Line 377)
   if item_name == "variant-crude-oil-barrel" then
     worm.autoplace.probability_expression = worm.autoplace.probability_expression.arguments[1]
   end
@@ -75,12 +93,15 @@ local function make_spawner_copy(resource, item_name, enemy_type)
   spawner.name = spawner.name .. ":" .. item_name
   spawner.enemy_map_color = resource.map_color
   spawner.loot = {{item = item_name, count_min = 50, count_max = 150}}
+  spawner.icons = make_resource_icon(spawner.icon, item_name)
+  spawner.icon = nil
   for _, UnitSpawnDefinition in pairs(spawner.result_units) do
     UnitSpawnDefinition[1] = UnitSpawnDefinition[1] .. ":" .. item_name
   end
 
   spawner.autoplace = util.copy(resource.autoplace)
   spawner.autoplace.force = "enemy"
+  -- data\core\lualib\resource-autoplace.lua Line 375 (Line 377)
   if item_name == "variant-crude-oil-barrel" then
     spawner.autoplace.probability_expression = spawner.autoplace.probability_expression.arguments[1]
   end
