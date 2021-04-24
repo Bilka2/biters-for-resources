@@ -3,6 +3,8 @@ Version: 1.0.1
 Date: ????
   Features:
     - Added ore icons to the enemy entity icons.
+  Changes:
+    - Changed mod title to "Kill biters for resources".
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2021-04-19
