@@ -518,9 +518,7 @@ graphics.enemy_decals = function(map_color, item_name)
     v.hr_version.tint = tint
   end
 
-  data:extend{enemy_decal}
-  data:extend{enemy_decal_t}
-  data:extend{shroom_decal}
+  data:extend{enemy_decal, enemy_decal_t, shroom_decal}
 end
 
 return graphics

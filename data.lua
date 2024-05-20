@@ -1,6 +1,6 @@
-local util = require("util")
-local noise = require("noise")
-local graphics = require("graphics")
+local util = require("__core__/lualib/util")
+local noise = require("__core__/lualib/noise")
+local graphics = require("__biters-for-resources__/graphics")
 
 local biter_sizes = {"small", "medium", "big", "behemoth"}
 local loot_scaling = {}

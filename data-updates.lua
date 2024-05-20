@@ -1,3 +1,4 @@
+local util = require("__core__/lualib/util")
 local multiplier = 10
 
 local barrel = util.copy(data.raw.item["crude-oil-barrel"])
