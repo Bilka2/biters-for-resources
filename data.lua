@@ -3,13 +3,10 @@ local noise = require("noise")
 local graphics = require("graphics")
 
 local biter_sizes = {"small", "medium", "big", "behemoth"}
-local loot_scaling =
-{
-  small = 1,
-  medium = 1,
-  big = 1,
-  behemoth = 1
-}
+local loot_scaling = {}
+for _, size in pairs(biter_sizes) do
+  loot_scaling[size] = settings.startup["biters-for-resources-loot-scaling-" .. size].value
+end
 
 local function make_loot(item_name, size, multiplier)
   local count_min = 1 * loot_scaling[size] * multiplier

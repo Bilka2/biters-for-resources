@@ -31,7 +31,7 @@ data:extend{
     allow_decomposition = false,
     always_show_products = true,
     show_amount_in_title = false
-  }
+  } --[[@as data.RecipePrototype]]
 }
 data.raw.recipe["empty-variant-crude-oil-barrel"].icons[1].tint = util.copy(data.raw.recipe["empty-variant-crude-oil-barrel"].icons[2].tint)
 data.raw.recipe["empty-variant-crude-oil-barrel"].icons[2].tint = data.raw.recipe["empty-variant-crude-oil-barrel"].icons[3].tint
